@@ -1,0 +1,318 @@
+\documentclass[10pt,a4paper,UTF8]{ctexart}
+\usepackage{geometry}%用于设置上下左右页边距
+	\geometry{left=2.5cm,right=2.5cm,top=3.2cm,bottom=2.8cm}
+\usepackage{xeCJK,amsmath,paralist,enumerate,booktabs,multirow,graphicx,subfig,setspace,listings,lastpage,hyperref}
+\usepackage{amsthm, amssymb, bm, color, framed, graphicx, hyperref, mathrsfs}
+\usepackage{mathrsfs}  
+	\setlength{\parindent}{2em}
+	\lstset{language=Matlab}%
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\definecolor{mKeyword}{RGB}{0,0,255}          % bule
+\definecolor{mString}{RGB}{160,32,240}        % purple
+\definecolor{mComment}{RGB}{34,139,34}        % green
+\definecolor{mNumber}{RGB}{128,128,128} 
+
+\lstdefinestyle {njulisting} {
+	basewidth = 0.5 em,
+	lineskip = 3 pt,
+	basicstyle = \small\ttfamily,
+	% keywordstyle = \bfseries,
+	commentstyle = \itshape\color{gray}, 
+	basicstyle=\small\ttfamily,
+	keywordstyle={\color{mKeyword}},     % sets color for keywords
+	stringstyle={\color{mString}},       % sets color for strings
+	commentstyle={\color{mComment}},     % sets color for comments
+	numberstyle=\tiny\color{mNumber},
+	numbers = left,
+	captionpos = t,
+	breaklines = true,
+	xleftmargin = 2 em,
+	xrightmargin = 2 em,
+	frame=tlrb,
+	tabsize=4
+}
+
+\lstset{
+style = njulisting, % 调用上述样式 
+flexiblecolumns % 允许调整字符宽度
+}
+
+\pagestyle{fancy}
+\lhead{\textsc{Foundation of Computing System}}
+\rhead{\textsc{Nanjing University}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\theenumi}{(\arabic{enumi})}
+
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+
+\newcommand{\problemname}{待定义}
+\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目\  \problemname}}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答}\ }{\par}
+\newenvironment{note}{\par\noindent\textbf{题目 \problemname 的注记}}{\par}
+
+\begin{document}
+
+\begin{center}
+\LARGE\textbf{第十四章习题参考答案}
+\end{center}
+
+{\kaishu 包含题目：习题$14.7-14.10$}
+
+
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[scale=0.3]{img/}
+% \end{figure}
+
+% \lstset{language=C}
+% 	\begin{lstlisting}
+	
+% 	\end{lstlisting}
+
+
+
+\renewcommand{\problemname}{14.7}
+\begin{problem}
+	假设位于存储单元NUM中的值可以是任意一个大于2的32位的正整数。如下程序实现了什么？
+	\begin{lstlisting}
+			.data	x30000000 
+NUM:		.word	#201 
+RESULT:		.space	#4 
+;		 
+			.text	x40000000 
+			.global	main 
+main:		addi	r1, r0, #0 
+			addi	r2, r0, #2 
+			lw		r3, NUM(r0) 
+;
+LOOP:		jal		MOD 
+			beqz	r6, EXIT0 
+			addi	r2, r2, #1 
+			seq		r6, r2, r3 
+			bnez	r6, EXIT1 
+			j		LOOP 
+; 
+EXIT1:		addi	r1, r1, #1 
+EXIT0:		sw		RESULT(r0), r1 
+			trap	x00 
+;
+MOD:		addi	r4, r3, #0 
+AGAIN:		sub		r4, r4, r2 
+			slei	r6, r4, #0 
+			beqz	r6, AGAIN 
+			jr		r31
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	将上述汇编代码写成伪代码如下
+	\begin{lstlisting}
+r1 = 0; r2 = 2; r3 = NUM;
+Do{
+	MOD()
+	If (r6 == 0) 
+		break;
+	r2 = r2 + 1;
+	r6 = r2 == r3;
+	If (r6 == 1) {
+		r1 = r1 + 1; 
+		break;
+	}
+} while(1);
+RESULT = r1;
+MOD(){
+	r4 = r3; 
+	do{
+		r4 = r4 - r2;
+		r6 = r4 <= 0;
+	} while(r6 == 0);
+}
+	\end{lstlisting}
+	由于调用子例程MOD结束后r6始终是1，所以不会从EXIT0直接退出，实现了r1 = 1。
+\end{solution}
+
+
+\renewcommand{\problemname}{14.8}
+\begin{problem}
+	假设从存储单元DATA开始存储的10个值可以是任意的10个32位的整数。如下程序实现了什么？
+	\begin{lstlisting}
+			.data	x30000000 
+DATA:		.word	#3, #14, #35, #47, #5, #20, #12, #14, #6, #22 
+SaveR31:	.space	#4 
+;		 
+			.text	x40000000 
+			.global	main 
+main:		addi	r1, r0, DATA 
+			addi	r2, r0, #9 
+OutLoop:	beqz	r2, EXIT 
+			addi	r3, r2, #0 
+InnerLoop:	lw		r4, 0(r1) 
+			lw		r5, 4(r1) 
+			jal		CMP 
+			addi	r1, r1, #4 
+			subi	r3, r3, #1 
+			bnez	r3, InnerLoop 
+			slli	r6, r2, #2 
+			sub		r1, r1, r6 
+			subi	r2, r2, #1 
+			j		OutLoop	 
+EXIT:		trap	x00 
+; 
+CMP:		sw		SaveR31(r0), r31 
+			slt		r6, r4, r5 
+			bnez	r6, Return 
+			jal		SWAP 
+Return:		lw		r31, SaveR31(r0) 
+			ret 
+; 
+SWAP:		sw		4(r1), r4 
+			sw		0(r1), r5 
+			ret 
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	将上述代码翻译如下
+	\begin{lstlisting}
+r1 = [DATA]; r2 = 9;
+While (r2 != 0){
+	r3 = r2; 
+	Do{
+		r4 = r1[0];
+		r5 = r1[1];
+		CMP();
+		r1 = r1 + 4;
+		r3 = r3 - 1;
+	} while(r3 != 0);
+	r6 = r2 * 4;
+	r1 = r1 - r6;
+	r2 = r2 - 1;
+}
+CMP(){
+	r6 = r4 < r5; 
+	if (r6 == 0){
+		SWAP();
+	}
+}
+SWAP(){
+	r1[1] = r4;
+	r1[0] = r5;
+}
+	\end{lstlisting}
+	比较相邻两个数，前者不小于后者就交换，每次OutLoop选出一个最大数，实现排序。
+\end{solution}
+
+
+\renewcommand{\problemname}{14.9}
+\begin{problem}
+	如下程序将存储单元NUM中的数值显示在屏幕上，但是不能正常工作。请找出原因并修复。
+	\begin{lstlisting}
+		.data	x30000000 
+NUM:	.word	#8 
+; 
+		.text	x40000000 
+		.global	main 
+main:	jal		SubA 
+		trap	x07 
+		trap	x00 
+; 
+SubA:	lw		r1, NUM(r0) 
+		jal		SubB 
+		ret
+; 
+SubB:	addi	r4, r1, x30 
+		ret 
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	嵌套子程序中上一层必须保存r31，防止被下一层修改。
+	可以通过在调用 \verb|jal SubB| 之前保存r31，调用之后恢复r31来修复。
+\end{solution}
+
+\renewcommand{\problemname}{14.10}
+\begin{problem}
+	如下程序实现了什么？
+	\begin{lstlisting}
+		.data	x30000000 
+STACK:	.space	#100 
+PROMPT:	.asciiz	"Please enter your string: " 
+; 
+		.text	x40000000 
+		.global	main 
+main:	addi	r4, r0, PROMPT 
+		trap	x08 
+		addi	r3, r0, STACK 
+		addi	r5, r3, #100	
+		addi	r29, r5, #0 
+Input:	seq		r2, r29, r3 
+		bnez	r2, Output 
+		trap	x06 
+		trap	x07 
+		seqi	r2, r4, #10 
+		bnez	r2, Output 
+		jal		PUSH 
+		j		Input 
+; 
+Output:	seq		r2, r29, r5 
+		bnez	r2, DONE 
+		jal		POP 
+		trap	x07 
+		j		Output
+; 
+DONE:	trap	x00 
+; 
+PUSH:	subi	r29, r29, #4 
+		sw		0(r29), r4 
+		ret 
+; 
+POP:	lw		r4, 0(r29) 
+		addi	r29, r29, #4 
+		ret 
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	将上述代码翻译如下
+	\begin{lstlisting}
+printf("Please enter your string:");
+r3 = [STACK]; r5 = r3 + 100; r29 = r5;
+While (1){
+	r2 = r29 == r3; 
+	if (r2 == 1) 
+		Output();
+	scanf(); 
+	printf(); 
+	r2 = r4 == 10; 
+	if (r2 == 1) 
+		Output(); 
+	PUSH();
+}
+Output(){
+	r2 = r29 == r5;
+	if (r2 == 1) 
+		exit; 
+	POP(); 
+	printf(); 
+	Output();
+}
+PUSH(){
+	r29 = r29 - 4; 
+	r29[0] = r4;
+}
+POP(){
+	r4 = r29[0];
+	r29 = r29 + 4;
+}
+	\end{lstlisting}
+	带回显地输入以换行符为结束标记的字符串（最长25），再以反序输出到屏幕上。
+\end{solution}
+
+\end{document}

@@ -1,0 +1,285 @@
+\documentclass[10pt,a4paper,UTF8]{ctexart}
+\usepackage{geometry}%用于设置上下左右页边距
+	\geometry{left=2.5cm,right=2.5cm,top=3.2cm,bottom=2.8cm}
+\usepackage{xeCJK,amsmath,paralist,enumerate,booktabs,multirow,graphicx,subfig,setspace,listings,lastpage,hyperref}
+\usepackage{amsthm, amssymb, bm, color, framed, graphicx, hyperref, mathrsfs}
+\usepackage{mathrsfs}  
+	\setlength{\parindent}{2em}
+	\lstset{language=Matlab}%
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\definecolor{mKeyword}{RGB}{0,0,255}          % bule
+\definecolor{mString}{RGB}{160,32,240}        % purple
+\definecolor{mComment}{RGB}{34,139,34}        % green
+\definecolor{mNumber}{RGB}{128,128,128} 
+
+\lstdefinestyle {njulisting} {
+	basewidth = 0.5 em,
+	lineskip = 3 pt,
+	basicstyle = \small\ttfamily,
+	% keywordstyle = \bfseries,
+	commentstyle = \itshape\color{gray}, 
+	basicstyle=\small\ttfamily,
+	keywordstyle={\color{mKeyword}},     % sets color for keywords
+	stringstyle={\color{mString}},       % sets color for strings
+	commentstyle={\color{mComment}},     % sets color for comments
+	numberstyle=\tiny\color{mNumber},
+	numbers = left,
+	captionpos = t,
+	breaklines = true,
+	xleftmargin = 2 em,
+	xrightmargin = 2 em,
+	frame=tlrb,
+	tabsize=4
+}
+
+\lstset{
+style = njulisting, % 调用上述样式 
+flexiblecolumns % 允许调整字符宽度
+}
+
+\pagestyle{fancy}
+\lhead{\textsc{Foundation of Computing System}}
+\rhead{\textsc{Nanjing University}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\theenumi}{(\arabic{enumi})}
+
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+
+\newcommand{\problemname}{待定义}
+\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目\  \problemname}}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答}\ }{\par}
+\newenvironment{note}{\par\noindent\textbf{题目 \problemname 的注记}}{\par}
+
+\begin{document}
+
+\begin{center}
+\LARGE\textbf{第十三章习题参考答案}
+\end{center}
+
+{\kaishu 包含题目：习题$13.3$、$13.4$、$13.5$、$13.7$、$13.10$、$13.13$和$13.14$}
+
+
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[scale=0.3]{img/}
+% \end{figure}
+
+% \lstset{language=C}
+% 	\begin{lstlisting}
+	
+% 	\end{lstlisting}
+
+
+
+\renewcommand{\problemname}{13.3}
+\begin{problem}
+	设计一个新的TRAP服务例程，该服务例程读入一个字符并回显到屏幕上，如下所示：
+	\begin{lstlisting}
+			.data	x00003C00 
+SaveR31:	.space	4  
+;		 
+			.text	x0000 3D00 
+			sw	SaveR31(r0), r31 
+			getc 
+			out 
+; 
+			lw	r31, SaveR31(r0) 
+			jr	r31 
+	\end{lstlisting}
+	\begin{enumerate}[(1)]
+		\item 请说明调用此服务例程的指令。假设每个服务例程均占用$2^{10}$个单元。
+		\item 此服务例程能否正常运行？
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item TRAP x08的数据段地址是x00002C00，这个服务例程的是x00003C00，相差$2^{12}$，
+		每个服务例程占有$2^{10}$个单元，所以该服务的调用指令为TRAP x0C。
+		\item \begin{itemize}
+			\item 能够运行，getc和out是指令助记符。
+			\item 不能够运行，没有对R4进行保存/恢复工作。
+		\end{itemize}
+	\end{enumerate}
+
+\end{solution}
+
+
+\renewcommand{\problemname}{13.4}
+\begin{problem}
+	重新定义DLX的TRAP机制，使其不使用TRAP向量表：
+	\begin{enumerate}[(1)]
+		\item 通过将TRAP向量左移8位，形成相应服务例程的起始地址，那么，
+		每个服务例程最多可以占用多少存储单元？
+		256个TRAP服务例程需要占用多少存储单元？
+		\item TRAP向量提供的就是相应服务例程的起始地址，每个服务例程占用$2^{10}$个单元，
+		那么，256个TRAP服务例程需要占用多少存储单元？ 
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item TRAP x08对应的服务例程起始地址是x00000800，
+		TRAP x09对应的服务例程起始地址是x00000900，因此，每个服务例程最多有$2^8$个单元；
+		256个TRAP服务例程需要占用$2^{16}$个存储单元。
+		\item 需要占用$2^{18}$个存储单元
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{13.5}
+\begin{problem}
+	执行如下程序，出现了一些异常行为，请解释原因。
+	\begin{lstlisting}
+		.text		x4000 0000 
+		.global		main 
+main:	SW			24(R0), R0 
+		GETC 
+		OUT 
+		TRAP		x00 	
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	内存单元x0000 0000 $\sim$ x0000 03FF被用来存储TRAP向量表，不能对其进行写入操作。
+\end{solution}
+
+
+\renewcommand{\problemname}{13.7}
+\begin{problem}
+	执行如下汇编语言程序，输出是什么？
+	\begin{lstlisting}
+			.data		x30000000 
+Char:		.word		x61626364 
+HelloWorld:	.asciiz  	"Hello, World!" 
+;		 
+			.text		x40000000 
+			.global		main 
+main:		addi		r1, r0, #0 
+			addi		r4, r0, Char 
+			sw			4(r4), r1 
+			trap		x08 
+; 
+Exit:		trap		x00 
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	屏幕输出“abcd”
+\end{solution}
+
+
+\renewcommand{\problemname}{13.10}
+\begin{problem}
+	中断驱动的I/O
+	\begin{enumerate}
+		\item 如下程序实现了什么？
+		\begin{lstlisting}
+		.data	x30000000 
+KBSR:	.word	xFFFF0000 
+; 
+		.text	x40000000 
+		.global	main 
+main:	lw		r1, KBSR(r0) 
+		lw		r2, 0(r1) 
+		ori		r2, r2, #2 
+		sw		0(r1), r2 
+LOOP:	addi	r4, r0, x41 
+		out 
+		j		LOOP 
+		trap	x00 
+		\end{lstlisting}
+		\item 如果有人键入了一个键，程序将被中断。
+		修改图13.11给出的中断服务例程，对键盘的处理片段修改如下：
+		\begin{lstlisting}
+DEV1:	lw	r1, KBDR(r0) 
+		lw	r4, 0(r1)	 
+		out					; 新增的内容
+		jr	r7 
+		\end{lstlisting}
+		假设程序（1）开始执行，坐在键盘前的人键入了一个“8”，
+		那么，屏幕上将显示什么内容？提示：“8”可于程序执行的任意时刻输入。 
+	\end{enumerate}
+
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 程序将KBSR[1]置1，并且不断输出“A”。
+		\item 如果在原程序out指令前中断，则屏幕上将显示“A...A88A...A”；
+				如果在原程序out指令后中断，则屏幕上将显示“A...A8A...A”。
+	\end{enumerate}
+
+\end{solution}
+
+
+\renewcommand{\problemname}{13.13}
+\begin{problem}
+	请写出处理如下任务的C语言的I/O函数调用。每个任务只需要一次调用。
+	\begin{enumerate}[(1)]
+		\item 将一个电话号码按照(XX)-XX-XXXXXXXX的格式输出，假设电话号码被存储于3个整数变量中。
+		\item 读取一个(XX)XX,XXXXXXXX格式的电话号码到3个整数变量中。
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item \ 
+		\begin{lstlisting}[language=C]
+int first, second, third;
+…
+printf ("The phone number is: (%d)-%d-%d\n", first, second, third);
+		\end{lstlisting}
+		\item \ 
+		\begin{lstlisting}[language=C]
+int first, second, third;
+scanf ("(%d)%d,%d", &first, &second, &third);
+		\end{lstlisting}
+
+	\end{enumerate}
+
+\end{solution}
+
+
+\renewcommand{\problemname}{13.14}
+\begin{problem}
+	对于如下程序：
+	\begin{lstlisting}[language=C]
+#include <stdio.h> 
+
+int main() { 
+	int x = 0; 
+	int y = 0; 
+	char a = 'a'; 
+	char b = 'b';
+	a = getchar(); 
+	scanf ("%d%d", &x, &y); 
+	b = getchar(); 
+
+	printf ("%d %d %c %c", x, y, a, b); 
+} 
+
+	\end{lstlisting}
+	\begin{enumerate}[(1)]
+		\item 如果输入流是10 20 C，程序的输出是什么？
+		\item 如果输入流是C 10 20D，程序的输出是什么？
+		\item 如果输入流是10 C，程序的输出是什么？
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 0 20 1 [空格]
+		\item 10 20 C D
+		\item 0 0 1 C
+	\end{enumerate}
+\end{solution}
+
+\end{document}

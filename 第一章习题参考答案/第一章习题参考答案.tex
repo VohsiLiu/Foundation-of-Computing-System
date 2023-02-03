@@ -1,0 +1,165 @@
+\documentclass[10pt,a4paper,UTF8]{ctexart}
+\usepackage{geometry}%用于设置上下左右页边距
+	\geometry{left=2.5cm,right=2.5cm,top=3.2cm,bottom=2.8cm}
+\usepackage{xeCJK,amsmath,paralist,enumerate,booktabs,multirow,graphicx,subfig,setspace,listings,lastpage,hyperref}
+\usepackage{amsthm, amssymb, bm, color, framed, graphicx, hyperref, mathrsfs}
+\usepackage{mathrsfs}  
+	\setlength{\parindent}{2em}
+	\lstset{language=Matlab}%
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mKeyword}{RGB}{0,0,255}          % bule
+\definecolor{mString}{RGB}{160,32,240}        % purple
+\definecolor{mComment}{RGB}{34,139,34}        % green
+\definecolor{mNumber}{RGB}{128,128,128} 
+
+\lstdefinestyle {njulisting} {
+	basewidth = 0.5 em,
+	lineskip = 3 pt,
+	basicstyle = \small\ttfamily,
+	% keywordstyle = \bfseries,
+	%commentstyle = \itshape\color{gray}, 
+	basicstyle=\small\ttfamily,
+	keywordstyle={\color{mKeyword}},     % sets color for keywords
+	stringstyle={\color{mString}},       % sets color for strings
+	commentstyle={\color{mComment}},     % sets color for comments
+	numberstyle=\tiny\color{mNumber},
+	numbers = left,
+	captionpos = t,
+	breaklines = true,
+	xleftmargin = 2 em,
+	xrightmargin = 2 em,
+	frame=tlrb,
+	tabsize=4
+}
+
+\lstset{
+style = njulisting, % 调用上述样式 
+flexiblecolumns % 允许调整字符宽度
+}
+
+\pagestyle{fancy}
+\lhead{\textsc{Foundation of Computing System}}
+\rhead{\textsc{Nanjing University}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\theenumi}{(\arabic{enumi})}
+
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+
+\newcommand{\problemname}{待定义}
+\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目\  \problemname}}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答}\ }{\par}
+\newenvironment{note}{\par\noindent\textbf{题目 \problemname 的注记}}{\par}
+
+\begin{document}
+
+\begin{center}
+\LARGE\textbf{第一章习题参考答案}
+\end{center}
+
+{\kaishu 包含题目：习题1.2、1.6、1.7、1.8和1.9}
+
+
+\renewcommand{\problemname}{1.2}
+\begin{problem}
+	有两台计算机 A 和 B，A有乘法指令，而 B没有；两者都有加法和减法指令；在其他方面两者都相同。
+	那么，在A和B中，哪台计算机可以解决更多的问题？
+\end{problem}
+
+\begin{solution}
+	所有的计算机（无论大还是小，快还慢，昂贵还是便宜），如果给予足够的时间和足够的存储器，
+	都可以做相同的计算。换句话说，所有的计算机都能做几乎完全相同的事情，只是计算速度上有差别。
+\end{solution}
+
+
+\renewcommand{\problemname}{1.6}
+\begin{problem}
+	给出如下问题的算法。
+	\begin{enumerate}[(1)]
+		\item 计算$1+2+3+4+5+6+7+8+9+10$
+		\item 判定 $2010-2500$ 年中的某一年是否为闰年
+		\item 对一个大于或等于3的正整数，判断它是否为素数（质数）
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	以下参考解法均采用C语言代码描述，也可以用伪代码或自然语言描述等
+	\begin{enumerate}[(1)]
+		\item \ 
+\lstset{language=C}
+\begin{lstlisting}
+int sum (int n){
+	int result = 0;
+	for(int i = 1; i <= n; i++){
+		sum += i;
+	}
+	return result;
+}
+\end{lstlisting}
+
+		\item \ 
+\lstset{language=C}
+\begin{lstlisting}
+int isLeapYear (int year){
+	return (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
+}
+\end{lstlisting}
+
+		\item \ 
+\lstset{language=C}
+\begin{lstlisting}
+bool isPrime (int num){
+	for (int i= 2; i <= sqrt(num); i++){
+	if (num % i == 0)
+		return false;
+	}
+	return true;
+}
+\end{lstlisting}
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{1.7}
+\begin{problem}
+	当将计算机升级（如更换CPU）后，原来的软件（如操作系统）还能够使用吗？
+\end{problem}
+
+\begin{solution}
+	言之有理即可。
+	\begin{itemize}
+		\item 能用。计算机升级升的是硬件，软件存储在磁盘中，
+		只要升级的硬件提供与原有硬件相同的工作方式和功能，软件还是能够正常工作的。
+		\item 不能用。计算机中的硬件升级前与升级后所需要的驱动可能不一样，
+		软件无法通过原有方法调用底层硬件，因此也就不能使用了。
+	\end{itemize}
+\end{solution}
+
+
+\renewcommand{\problemname}{1.8}
+\begin{problem}
+	人们购买的软件通常是以什么语言编写的？是高级语言还是与目标机器ISA兼容的机器语言？
+\end{problem}
+
+\begin{solution}
+	软件可能存在的方式是多种多样的：源代码或目标代码。源代码包括汇编语言、
+	3GL和4GL、经验知识等。目标代码包括机器语言、解释型源代码等。
+	具体可参考：
+	\href{http://www.rogerclarke.com/SOS/PaperLiaby.html}{http://www.rogerclarke.com/SOS/PaperLiaby.html}
+\end{solution}
+
+
+\renewcommand{\problemname}{1.9}
+\begin{problem}
+	关于计算系统的每个抽象层次，分别举出两个以上的例子进行说明。
+\end{problem}
+
+\begin{solution}
+	计算系统的抽象层次：问题、算法、程序、操作系统、指令集系统、微处理器、逻辑电路、元件。
+\end{solution}
+
+\end{document}

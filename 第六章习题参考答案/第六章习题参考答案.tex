@@ -1,0 +1,357 @@
+\documentclass[10pt,a4paper,UTF8]{ctexart}
+\usepackage{geometry}%用于设置上下左右页边距
+	\geometry{left=2.5cm,right=2.5cm,top=3.2cm,bottom=2.8cm}
+\usepackage{xeCJK,amsmath,paralist,enumerate,booktabs,multirow,graphicx,subfig,setspace,listings,lastpage,hyperref}
+\usepackage{amsthm, amssymb, bm, color, framed, graphicx, hyperref, mathrsfs}
+\usepackage{mathrsfs}  
+	\setlength{\parindent}{2em}
+	\lstset{language=Matlab}%
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{mKeyword}{RGB}{0,0,255}          % bule
+\definecolor{mString}{RGB}{160,32,240}        % purple
+\definecolor{mComment}{RGB}{34,139,34}        % green
+\definecolor{mNumber}{RGB}{128,128,128} 
+
+\lstdefinestyle {njulisting} {
+	basewidth = 0.5 em,
+	lineskip = 3 pt,
+	basicstyle = \small\ttfamily,
+	% keywordstyle = \bfseries,
+	commentstyle = \itshape\color{gray}, 
+	basicstyle=\small\ttfamily,
+	keywordstyle={\color{mKeyword}},     % sets color for keywords
+	stringstyle={\color{mString}},       % sets color for strings
+	commentstyle={\color{mComment}},     % sets color for comments
+	numberstyle=\tiny\color{mNumber},
+	numbers = left,
+	captionpos = t,
+	breaklines = true,
+	xleftmargin = 2 em,
+	xrightmargin = 2 em,
+	frame=tlrb,
+	tabsize=4
+}
+
+\lstset{
+style = njulisting, % 调用上述样式 
+flexiblecolumns % 允许调整字符宽度
+}
+
+\pagestyle{fancy}
+\lhead{\textsc{Foundation of Computing System}}
+\rhead{\textsc{Nanjing University}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\theenumi}{(\arabic{enumi})}
+
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+
+\newcommand{\problemname}{待定义}
+\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目\  \problemname}}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答}\ }{\par}
+\newenvironment{note}{\par\noindent\textbf{题目 \problemname 的注记}}{\par}
+
+\begin{document}
+
+\begin{center}
+\LARGE\textbf{第六章习题参考答案}
+\end{center}
+
+{\kaishu 包含题目：习题$6.3-6.5$以及$6.7-6.17$}
+
+\renewcommand{\problemname}{6.3}
+\begin{problem}
+	将下列二进制数转化为十进制数，假设此二进制数分别为原码、反码和补码整数。
+	\begin{enumerate}[(1)]
+		\item 0111
+		\item 1110
+		\item 11111111
+		\item 10000000
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 若是原码，则为7；若是反码，则为7；若是补码，则为7。
+		\item 若是原码，则为$-6$；若是反码，则为$-1$；若是补码，则为$-2$。
+		\item 若是原码，则为$-127$；若是反码，则为0；若是补码，则为$-1$。
+		\item 若是原码，则为$-0$；若是反码，则为$-127$；若是补码，则为$-128$。
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{6.4}
+\begin{problem}
+	将下列十进制数分别转化为8位二进制原码、反码和补码整数。
+	\begin{enumerate}[(1)]
+		\item $-86$
+		\item 85
+		\item $-127$
+		\item 127
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 原码1101 0110，反码1010 1001，补码1010 1010。
+		\item 原码0101 0101，反码0101 0101，补码0101 0101。
+		\item 原码1111 1111，反码1000 0000，补码1000 0001。
+		\item 原码0111 1111，反码0111 1111，补码0111 1111。
+	\end{enumerate}
+	
+\end{solution}
+
+
+\renewcommand{\problemname}{6.5}
+\begin{problem}
+	如果二进制补码整数最后一位是0，表明该数是偶数，如果最后两位是00,则表明该数有什么特点？
+\end{problem}
+
+\begin{solution}
+	能被4整除
+\end{solution}
+
+
+\renewcommand{\problemname}{6.7}
+\begin{problem}
+	对于一个二进制数，如果向右移一位，则意味着进行了什么运算？
+\end{problem}
+
+\begin{solution}
+	除以2
+\end{solution}
+
+
+\renewcommand{\problemname}{6.8}
+\begin{problem}
+	做下列二进制补码整数加法运算，给出十进制形式的结果，并判断是否产生溢出。
+	\begin{enumerate}[(1)]
+		\item 1101 + 01010101
+		\item 0111 + 0101
+		\item 11111111 + 01
+		\item 01 + 1110
+		\item 0111 + 0001
+		\item 1000 + 11
+		\item 1100 + 00110011
+		\item 1010 + 101
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item $1111 1101+0101 0101=(1)0101 0010=82$，没有溢出。
+		\item $0111+ 0101=1101=-3$，溢出。
+		\item $1111 1111+0000 0001=(1)0000 0000=0$，没有溢出。
+		\item $0001+ 1110=1111=-1$，没有溢出。
+		\item $0111+0001=1000=-8$，溢出。
+		\item $1000+1111=(1)0111=7$，溢出。
+		\item $1111 1100+0011 0011=(1)0010 1111=47$，没有溢出。
+		\item $1010+1101=(1)0111=7$，溢出。
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{6.9}
+\begin{problem}
+	做下列二进制数逻辑运算，结果以二进制形式给出。
+	\begin{enumerate}[(1)]
+		\item 11001100 AND 01010101
+		\item (1100 AND 0101) AND 1101
+		\item 1100 AND (0101 AND 1101)
+		\item 11001100 OR 01010101
+		\item (1100 OR 0101) OR 1101
+		\item 1100 OR(0101 OR 1101)
+		\item NOT (NOT 1011)
+		\item 1101 XOR 0101
+		\item NOT( (NOT 1101) OR (NOT 0101) )
+		\item NOT( (NOT 1101) AND (NOT 0101) )
+		\item ( (NOT 1101) AND 0101) OR (1101 AND (NOT 0101) )
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 0101 0111
+		\item 0000
+		\item 0000
+		\item 1101 0111
+		\item 1111
+		\item 1111
+		\item 0111
+		\item 0111
+		\item 1101
+		\item 0110
+	\end{enumerate}
+	
+\end{solution}
+
+
+\renewcommand{\problemname}{6.10}
+\begin{problem}
+	给出下列十进制数的 IEEE 浮点数表示形式（32位），并将这些数的 IEEE 浮点数转换为十六进制表示。
+	\begin{enumerate}[(1)]
+		\item $32.9375$
+		\item $-32\frac{45}{128}$
+		\item $-2^{-140}$
+		\item 65536
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 0 1000 0100 0000 0111 1000 0000 0000 000，十六进制为0x4203C000
+		\item 1 1000 0100 0000 0010 1101 0000 0000 000，十六进制为0xC2016800
+		\item 1 0000 0000 0000 0000 0000 0100 0000 000，十六进制为0x80000200
+		\item 0 1000 1111 0000 0000 0000 0000 0000 000，十六进制为0x47800000
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{6.11}
+\begin{problem}
+	给出下列 IEEE 浮点数的十进制数表示形式。
+	\begin{enumerate}[(1)]
+		\item 0 00000001 00000000000000000000000
+		\item 0 00000000 0000000010000000000000
+		\item 1 11111011 00000000000000000000000
+		\item 1 10000001 10101000000000000000000
+		\item 0 01111101 01010100000000000000000
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item $2^{-126}$
+		\item $2^{-136}$ 
+		\item $-2^{124}$
+		\item $-6.625$
+		\item $(0.01010101)_2=0.33203125$​
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{6.12}
+\begin{problem}
+	将下列16位的二进制补码整数的十六进制数转換为十进制数。
+	\begin{enumerate}[(1)]
+		\item x8000
+		\item x7FFF
+		\item x1234
+		\item xABCD
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 1000 0000 0000 0000 $=-2^{15}$
+		\item 0111 1111 1111 1111 $=2^{15}-1$
+		\item 0001 0010 0011 0100 $=4660$
+		\item 1010 1011 1100 1101 $=-21555$
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{6.13}
+\begin{problem}
+	将下列十进制数转换为16位的二进制补码整数的十六进制表示。
+	\begin{enumerate}[(1)]
+		\item $-86$
+		\item 85
+		\item $-127$
+		\item 127
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item 1111 1111 1010 1010，十六进制为0xFFAA
+		\item 0000 0000 0101 0101，十六进制为0x0055
+		\item 1111 1111 1000 0001，十六进制为0xFF81
+		\item 0000 0000 0111 1111，十六进制为0x007F
+	\end{enumerate}
+	
+\end{solution}
+
+
+\renewcommand{\problemname}{6.14}
+\begin{problem}
+	如下代码将分别输出哪此内容？
+	\begin{enumerate}[(1)]
+		\item \verb|printf ("%c\n", 13 + 'A');|
+		\item \verb|printf ("%x\n, 130);|
+	\end{enumerate}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[(1)]
+		\item N（换行）
+		\item 82（换行）
+	\end{enumerate}
+\end{solution}
+
+
+\renewcommand{\problemname}{6.15}
+\begin{problem}
+	解释如下代码段的作用。
+	\lstset{language=C}
+	\begin{lstlisting}
+char nextChar;
+int x;
+
+scanf ("%c", &nextChar);
+printf ("%d\n", nextChar);
+
+scanf ("%d", &x);
+printf ("%c\n", x);		
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	读入一个字符，并输出其ASCII码值；读入一个数字，并输出ASCII码值为该数字的相应字符。
+\end{solution}
+
+
+\renewcommand{\problemname}{6.16}
+\begin{problem}
+	描述如下代码段的作用及输出。
+	\lstset{language=C}
+	\begin{lstlisting}
+int i, j;
+int count = 0;
+
+scanf ("%d", &i);
+for (j = 0; j < 32; j++){
+	if (i & (1 << j)){
+		count++;
+	}
+}
+
+printf("%d\n", count);
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	输出输入数字二进制值中的1的个数。
+\end{solution}
+
+
+\renewcommand{\problemname}{6.17}
+\begin{problem}
+	如下代码是否会造成无限循环？
+	\lstset{language=C}
+	\begin{lstlisting}
+int i = 1;
+while (i > 0)
+	i++;
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	不会，当\verb|i|的值增大到整型的最大值时，再增加\verb|i|的值会发生负溢出，结束循环。
+\end{solution}
+
+\end{document}

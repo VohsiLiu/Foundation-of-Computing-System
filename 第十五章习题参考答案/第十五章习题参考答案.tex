@@ -1,0 +1,289 @@
+\documentclass[10pt,a4paper,UTF8]{ctexart}
+\usepackage{geometry}%用于设置上下左右页边距
+	\geometry{left=2.5cm,right=2.5cm,top=3.2cm,bottom=2.8cm}
+\usepackage{xeCJK,amsmath,paralist,enumerate,booktabs,multirow,graphicx,subfig,setspace,listings,lastpage,hyperref}
+\usepackage{amsthm, amssymb, bm, color, framed, graphicx, hyperref, mathrsfs}
+\usepackage{mathrsfs}  
+	\setlength{\parindent}{2em}
+	\lstset{language=Matlab}%
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\definecolor{mKeyword}{RGB}{0,0,255}          % bule
+\definecolor{mString}{RGB}{160,32,240}        % purple
+\definecolor{mComment}{RGB}{34,139,34}        % green
+\definecolor{mNumber}{RGB}{128,128,128} 
+
+\lstdefinestyle {njulisting} {
+	basewidth = 0.5 em,
+	lineskip = 3 pt,
+	basicstyle = \small\ttfamily,
+	% keywordstyle = \bfseries,
+	commentstyle = \itshape\color{gray}, 
+	basicstyle=\small\ttfamily,
+	keywordstyle={\color{mKeyword}},     % sets color for keywords
+	stringstyle={\color{mString}},       % sets color for strings
+	commentstyle={\color{mComment}},     % sets color for comments
+	numberstyle=\tiny\color{mNumber},
+	numbers = left,
+	captionpos = t,
+	breaklines = true,
+	xleftmargin = 2 em,
+	xrightmargin = 2 em,
+	frame=tlrb,
+	tabsize=4
+}
+
+\lstset{
+style = njulisting, % 调用上述样式 
+flexiblecolumns % 允许调整字符宽度
+}
+
+\pagestyle{fancy}
+\lhead{\textsc{Foundation of Computing System}}
+\rhead{\textsc{Nanjing University}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\theenumi}{(\arabic{enumi})}
+
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+
+\newcommand{\problemname}{待定义}
+\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目\  \problemname}}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答}\ }{\par}
+\newenvironment{note}{\par\noindent\textbf{题目 \problemname 的注记}}{\par}
+
+\begin{document}
+
+\begin{center}
+\LARGE\textbf{第十五章习题参考答案}
+\end{center}
+
+{\kaishu 包含题目：习题$15.1$、$15.2$、$15.3$、$15.7$和$15.9$}
+
+
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[scale=0.3]{img/}
+% \end{figure}
+
+% \lstset{language=C}
+% 	\begin{lstlisting}
+	
+% 	\end{lstlisting}
+
+
+
+\renewcommand{\problemname}{15.1}
+\begin{problem}
+	如下程序的输出是什么？
+	\begin{lstlisting}[language=C]
+#include <stdio.h> 
+
+int Sub (int x, int y); 
+
+int main () { 
+	int x = 2; 
+	int y = 3; 
+	int z; 
+  
+	z = Sub (x, y); 
+	x = Sub (y, z); 
+	y = Sub (x, y); 
+	printf ("%d %d %d", x, y, z); 
+} 
+
+int Sub (int y, int x) { 
+	return y - x; 
+}
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	该程序的输出为4 1 $-1$
+\end{solution}
+
+
+\renewcommand{\problemname}{15.2}
+\begin{problem}
+	如下程序的输出是什么？
+	\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int Multiply (int x, int y); 
+int z = 4; 
+
+int main () { 
+	int x = 2; 
+	int y = 3; 
+	int z; 
+	 
+	z = Multiply (x, y); 
+	x = Multiply (y, z); 
+	y = Multiply (x, z); 
+	printf ("%d %d %d \n ", z, x, y); 
+}  
+   
+int Multiply (int x, int y)	{ 
+	return x * y * z; 
+} 		   
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	该程序的输出为24 288 27648[换行]
+\end{solution}
+
+
+\renewcommand{\problemname}{15.3}
+\begin{problem}
+	如下程序的输出是什么？
+	\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+void Swap (int x, int y);
+
+int main(){
+	int x = 1;
+	int y = 2;
+
+	printf ("x=%d, y=%d\n", x, y);
+
+	Swap(x, y);
+	printf ("x=%d, y=%d\n", x, y);
+}
+
+void Swap(int x, int y){
+	int temp;
+	temp = x;
+	x = y;
+	y = temp;
+	printf ("x=%d, y=%d\n", x, y);
+}
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	该程序的输出为：
+
+	\verb|x=1, y=2|
+
+	\verb|x=2, y=1|
+
+	\verb|x=1, y=2|[换行]
+\end{solution}
+
+
+\renewcommand{\problemname}{15.7}
+\begin{problem}
+	使用DLX的C编译器对函数ToUpper进行编译，请写出DLX汇编代码。
+	\begin{lstlisting}[language=C]
+/*ToUpper函数*/
+/*如果参数是小写字母*/
+/*返回其大写字母的ASCII码*/ 
+char ToUpper (char inchar) { 
+	char outchar; 
+	if ('a' <= inchar && inchar <= 'z') 
+		outchar = inchar - ('a' - 'A'); 
+	else 
+		outchar = inchar; 
+	return outchar; 
+} 
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	\begin{lstlisting}
+ToUppeR:	SLTI 	R1, R4, #97 ; R4 saves inchar
+			BNEZ 	R1, Else
+			SLEI 	R1, R4, #122
+			BEQZ 	R1, Else
+			SUBI 	R2, R4, #32
+			J 		Done
+Else:
+			ADDI 	R2, R4, #0 ; R2 saves outchar
+			J 		Done
+Done:
+			ret
+	\end{lstlisting}
+\end{solution}
+
+
+\renewcommand{\problemname}{15.9}
+\begin{problem}
+	对于如下C代码，存在bug，请找出并修复：
+	\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() { 
+	int x = 1; 
+	int y = 2; 
+	x = Func1 (x, y); 
+	y = Func2 (y); 
+	printf ("x = %d y = %d\n", x, y); 
+} 
+
+int Func1 (int x) { 
+	return x + y; 
+} 
+
+int Func2 (int x) { 
+	int y; 
+	return x - y; 
+} 
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	\begin{enumerate}[1.]
+		\item 函数未声明:
+			需要在 \verb|main| 之前添加 \verb|Func1| 和 \verb|Func2| 的声明
+			\begin{lstlisting}[language=C]
+int Func1 (int);
+int Func2 (int);				
+			\end{lstlisting}
+
+	   	\item 函数 \verb|Func1| 的参数个数不匹配
+		\item 函数用到了未声明的变量：修改函数 \verb|Func1| 的参数结构，同时更新其声明。
+		\begin{lstlisting}[language=C]
+int Func1 (int, int);
+…
+int Func1 (int x, int y){…}			
+		\end{lstlisting}
+		\item 函数的局部变量没有初始化。（运行时错误）
+		局部变量使用前最好都要初始化，防止读取为初始化的局部变量。
+		\begin{lstlisting}[language=C]
+int y = 0;
+		\end{lstlisting}
+	\end{enumerate}
+	修改后的代码如下：
+	\begin{lstlisting}[language=C]
+#include <stdio.h> 
+
+int Func1 (int, int);
+int Func2 (int);
+
+int main() { 
+	int x = 1; 
+	int y = 2; 
+	x = Func1 (x, y); 
+	y = Func2 (y); 
+	printf ("x = %d y = %d\n", x, y); 
+} 
+
+int Func1 (int x, int y) { 
+	return x + y; 
+} 
+
+int Func2 (int x) { 
+	int y = 0; 
+	return x - y; 
+} 
+	\end{lstlisting}
+\end{solution}
+
+\end{document}

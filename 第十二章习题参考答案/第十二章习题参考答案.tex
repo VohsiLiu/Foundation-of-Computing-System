@@ -1,0 +1,181 @@
+\documentclass[10pt,a4paper,UTF8]{ctexart}
+\usepackage{geometry}%用于设置上下左右页边距
+	\geometry{left=2.5cm,right=2.5cm,top=3.2cm,bottom=2.8cm}
+\usepackage{xeCJK,amsmath,paralist,enumerate,booktabs,multirow,graphicx,subfig,setspace,listings,lastpage,hyperref}
+\usepackage{amsthm, amssymb, bm, color, framed, graphicx, hyperref, mathrsfs}
+\usepackage{mathrsfs}  
+	\setlength{\parindent}{2em}
+	\lstset{language=Matlab}%
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\definecolor{mKeyword}{RGB}{0,0,255}          % bule
+\definecolor{mString}{RGB}{160,32,240}        % purple
+\definecolor{mComment}{RGB}{34,139,34}        % green
+\definecolor{mNumber}{RGB}{128,128,128} 
+
+\lstdefinestyle {njulisting} {
+	basewidth = 0.5 em,
+	lineskip = 3 pt,
+	basicstyle = \small\ttfamily,
+	% keywordstyle = \bfseries,
+	commentstyle = \itshape\color{gray}, 
+	basicstyle=\small\ttfamily,
+	keywordstyle={\color{mKeyword}},     % sets color for keywords
+	stringstyle={\color{mString}},       % sets color for strings
+	commentstyle={\color{mComment}},     % sets color for comments
+	numberstyle=\tiny\color{mNumber},
+	numbers = left,
+	captionpos = t,
+	breaklines = true,
+	xleftmargin = 2 em,
+	xrightmargin = 2 em,
+	frame=tlrb,
+	tabsize=4
+}
+
+\lstset{
+style = njulisting, % 调用上述样式 
+flexiblecolumns % 允许调整字符宽度
+}
+
+\pagestyle{fancy}
+\lhead{\textsc{Foundation of Computing System}}
+\rhead{\textsc{Nanjing University}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\theenumi}{(\arabic{enumi})}
+
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+
+\newcommand{\problemname}{待定义}
+\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目\  \problemname}}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答}\ }{\par}
+\newenvironment{note}{\par\noindent\textbf{题目 \problemname 的注记}}{\par}
+
+\begin{document}
+
+\begin{center}
+\LARGE\textbf{第十二章习题参考答案}
+\end{center}
+
+{\kaishu 包含题目：习题$12.6-12.8$}
+
+
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[scale=0.3]{img/}
+% \end{figure}
+
+% \lstset{language=C}
+% 	\begin{lstlisting}
+	
+% 	\end{lstlisting}
+
+
+
+\renewcommand{\problemname}{12.6}
+\begin{problem}
+	重新设计DLX的键盘输入处理程序：使用一个可读/写键盘数据和状态寄存器（KBDSR）
+	代替KBDR和KBSR,且将内存地址 xFFFF 0010 $\sim$ xFFFF 0013 分配给 KBDSR。
+	KBDSR 中包含与KBDR相同的数据，
+	即从键盘输入的ASCII码。那么，输入例程只需检查 KBDSR 是否有非零值出现，
+	然后读取这个值，当读出该值
+	后，硬件电路将KBDSR清零。参考12.2节，给出新的输入例程。
+\end{problem}
+
+\begin{solution}
+	\begin{lstlisting}
+A:		.word	xFFFF0010	; KBDSR的起始地址
+		…… 
+		LW		R1, A(R0) 
+START:	LW		R2, 0(R1)	; 测试是否有字符被输入
+		ADNI	R3, R2, #-1 
+		BEQZ	R3, START 
+		LW		R4, 0(R1) 
+		J		NEXT_TASK	; 执行下一个任务
+	\end{lstlisting}
+\end{solution}
+
+
+\renewcommand{\problemname}{12.7}
+\begin{problem}
+	重新设计 DLX 的输入/输出处理程序：使用一个输入/输出状态寄存器（IOSR），代替KBSR 和 DSR。
+	IOSR[1]是键盘设备就绪位，IOSR[0]是显示器设备就绪位，且将内存地址 xFFFF 0010 $\sim$ xFFFF 0013 分配给
+	IOSR。参考12.2节和12.3节，给出新的输入例程和输出例程。
+\end{problem}
+
+\begin{solution}
+	输入例程
+	\begin{lstlisting}
+A:		.word	xFFFF0010	; IOSR的起始地址
+B:		.word	xFFFF0004	; KBDR的起始地址
+…… 
+		LW		R1, A(R0) 
+START:	LW		R2, 0(R1) 	; 测试是否有字符被输入
+		ANDI	R3, R2, #2 
+		BEQZ	R3, START 
+		LW		R1, B(R0) 
+		LW		R4, 0(R1) 
+		J		NEXT_TASK	; 执行下一个任务
+	\end{lstlisting}
+	输出例程
+	\begin{lstlisting}
+A:		.word	xFFFF0010	; IOSR的起始地址
+B:		.word	xFFFF000C	; DDR的起始地址
+…… 
+		LW		R1, A(R0) 
+START:	LW		R2, 0(R1) 	; 测试输出寄存器是否就绪
+		ANDI	R3, R2, #1 
+		BEQZ	R3, START 
+		LW		R1, B(R0) 
+		SW		0(R1), R4 
+		J		NEXT_TASK	; 执行下一个任务
+	\end{lstlisting}
+\end{solution}
+
+
+\renewcommand{\problemname}{12.8}
+\begin{problem}
+	如下DLX程序实现了什么？
+	\begin{lstlisting}
+		.data
+DSR:	.word	xFFFF0008	 
+DDR:	.word	xFFFF000C 
+; 
+		.text	
+		ADDI	R1, R0, x61 
+		ADDI	R2, R0, #26 
+LOOP:	LW		R3, DSR(R0) 
+START:	LW		R4, 0(R3) 
+		ADDI	R5, R4, #1 
+		BEQZ	R5, START	
+		LW		R3, DDR(R0) 
+		SW		0(R3), R1 
+		ADDI	R1, R1, #1 
+		SUBI	R2, R2, #1 
+		BNEZ	R2, LOOP 
+		J		NEXT_ TASK
+	
+	\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+	将上述程序写成伪代码
+	\begin{lstlisting}[language=C]
+r1 = 'a'
+r2 = 26
+do{
+	print r1
+	r1 = r1 + 1
+	r2 = r2 - 1
+}while (r2 != 0);
+	\end{lstlisting}
+	本程序实现了输出从“a”到“z”这26个字母。
+\end{solution}
+
+\end{document}
